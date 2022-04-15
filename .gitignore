@@ -1,0 +1,12 @@
+.vscode/
+saved_model/
+build/
+dist/
+sam4onnx.egg-info/
+sam4onnx/debug/
+sam4onnx/saved_model/
+__pycache__/
+
+*.onnx
+*.npy
+480x640_*
