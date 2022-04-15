@@ -19,3 +19,13 @@ $ sam4onnx \
 --attributes perm int64 [0,1]
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163525149-64da02af-754f-40e5-916a-20f581ff0034.png)
+
+### 6-2. Mul - update **`Constant (170)`** - From: **`2`**, To: **`1`**
+![image](https://user-images.githubusercontent.com/33194443/163560084-9541140a-6368-4f4f-aced-ebdf7bf43c70.png)
+```bash
+$ sam4onnx \
+--input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
+--output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
+--input_constants 170 float32 1
+```
+![image](https://user-images.githubusercontent.com/33194443/163560202-15584279-58d7-4c96-b1c3-7366d165ba21.png)
