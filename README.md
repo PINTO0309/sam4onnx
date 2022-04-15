@@ -29,3 +29,13 @@ $ sam4onnx \
 --input_constants 170 float32 1
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163560202-15584279-58d7-4c96-b1c3-7366d165ba21.png)
+
+### 6-3. Reshape - update **`Constant (241)`** - From: **`[-1]`**, To: **`[1]`**
+![image](https://user-images.githubusercontent.com/33194443/163560715-21e0ab88-7859-4b52-adb4-c4d902525ac3.png)
+```bash
+$ sam4onnx \
+--input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
+--output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
+--input_constants 241 int64 [1]
+```
+![image](https://user-images.githubusercontent.com/33194443/163561022-2e3dae84-7c6e-4ed0-9644-2248f91ab2ab.png)
