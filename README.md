@@ -176,9 +176,9 @@ modify(
 ## 4. CLI Execution
 ```bash
 $ sam4onnx \
---op_name Transpose_17
---input_onnx_file_path input.onnx
---output_onnx_file_path output.onnx
+--op_name Transpose_17 \
+--input_onnx_file_path input.onnx \
+--output_onnx_file_path output.onnx \
 --attributes perm int64 [0,1]
 ```
 
@@ -198,9 +198,9 @@ modified_graph = modify(
 ![image](https://user-images.githubusercontent.com/33194443/163525107-f355bc2e-66d6-4a8e-bc54-2fcfc36107e8.png)
 ```bash
 $ sam4onnx \
---op_name Transpose_17
---input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx
---output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx
+--op_name Transpose_17 \
+--input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
+--output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
 --attributes perm int64 [0,1]
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163525149-64da02af-754f-40e5-916a-20f581ff0034.png)
