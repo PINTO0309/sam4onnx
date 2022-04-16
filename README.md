@@ -109,7 +109,7 @@ modify(
     attributes: Union[dict, NoneType] = None,
     input_constants: Union[dict, NoneType] = None,
     non_verbose: Union[bool, NoneType] = False
-) -> Tuple[onnx.onnx_ml_pb2.ModelProto, List[str]]
+) -> onnx.onnx_ml_pb2.ModelProto
 
     Parameters
     ----------

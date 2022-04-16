@@ -9,7 +9,7 @@ import onnx
 import onnx_graphsurgeon
 import onnx_graphsurgeon as gs
 from onnx_graphsurgeon.ir.tensor import Variable
-from typing import Tuple, Optional, List
+from typing import Optional
 
 class Color:
     BLACK          = '\033[30m'
@@ -103,7 +103,7 @@ def modify(
     attributes: Optional[dict] = None,
     input_constants: Optional[dict] = None,
     non_verbose: Optional[bool] = False,
-) -> Tuple[onnx.ModelProto, List[str]]:
+) -> onnx.ModelProto:
 
     """
     Parameters
