@@ -224,3 +224,6 @@ $ sam4onnx \
 --input_constants 241 int64 [1]
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163561022-2e3dae84-7c6e-4ed0-9644-2248f91ab2ab.png)
+
+## 7. Issues
+https://github.com/PINTO0309/simple-onnx-processing-tools/issues
