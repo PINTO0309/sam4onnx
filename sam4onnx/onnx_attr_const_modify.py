@@ -90,6 +90,9 @@ def __search_op_constant_from_input_constant_name(
             if isinstance(input, Variable) and input.name == input_constant_name:
                 input_constant_to_change = input.inputs[0]
                 break
+        else:
+            continue
+        break
 
     # Return variable
     return input_constant_to_change
