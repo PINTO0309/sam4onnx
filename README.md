@@ -47,6 +47,7 @@ usage:
     --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
     [--op_name OP_NAME]
     [--attributes NAME DTYPE VALUE]
+    [--delete_attributes DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]]
     [--input_constants NAME DTYPE VALUE]
     [--non_verbose]
 
@@ -79,6 +80,15 @@ optional arguments:
         --attributes transA int64 0
         --attributes transB int64 0
 
+  --delete_attributes DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]
+        Parameter to delete the attribute of the OP specified in --op_name.
+        If the OP specified in --op_name has no attributes,
+        it is ignored. delete_attributes can be specified multiple times.
+        --delete_attributes name1 name2 name3
+        https://github.com/onnx/onnx/blob/main/docs/Operators.md
+
+        e.g. --delete_attributes alpha beta
+
   --input_constants NAME DTYPE VALUE
         Specifies the name of the constant to be changed.
         If you want to change only the constant,
@@ -99,6 +109,7 @@ optional arguments:
 $ python
 >>> from sam4onnx import modify
 >>> help(modify)
+
 Help on function modify in module sam4onnx.onnx_attr_const_modify:
 
 modify(
@@ -107,6 +118,7 @@ modify(
     onnx_graph: Union[onnx.onnx_ml_pb2.ModelProto, NoneType] = None,
     op_name: Union[str, NoneType] = '',
     attributes: Union[dict, NoneType] = None,
+    delete_attributes: Union[List[str], NoneType] = None,
     input_constants: Union[dict, NoneType] = None,
     non_verbose: Union[bool, NoneType] = False
 ) -> onnx.onnx_ml_pb2.ModelProto
@@ -147,6 +159,16 @@ modify(
             }
         Default: None
         https://github.com/onnx/onnx/blob/main/docs/Operators.md
+
+    delete_attributes: Optional[List[str]]
+        Parameter to delete the attribute of the OP specified in --op_name.
+        If the OP specified in --op_name has no attributes, it is ignored.
+        delete_attributes can be specified multiple times.
+        --delete_attributes name1 name2 name3
+        https://github.com/onnx/onnx/blob/main/docs/Operators.md
+
+        e.g.
+        --delete_attributes alpha beta
 
     input_constants: Optional[dict]
         Specifies the name of the constant to be changed.

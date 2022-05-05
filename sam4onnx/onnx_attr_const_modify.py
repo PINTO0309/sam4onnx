@@ -9,7 +9,7 @@ import onnx
 import onnx_graphsurgeon
 import onnx_graphsurgeon as gs
 from onnx_graphsurgeon.ir.tensor import Variable
-from typing import Optional
+from typing import Optional, List
 
 class Color:
     BLACK          = '\033[30m'
@@ -104,6 +104,7 @@ def modify(
     onnx_graph: Optional[onnx.ModelProto] = None,
     op_name: Optional[str] = '',
     attributes: Optional[dict] = None,
+    delete_attributes: Optional[List[str]] = None,
     input_constants: Optional[dict] = None,
     non_verbose: Optional[bool] = False,
 ) -> onnx.ModelProto:
@@ -143,6 +144,15 @@ def modify(
             }\n\
         Default: None\n\
         https://github.com/onnx/onnx/blob/main/docs/Operators.md
+
+    delete_attributes: Optional[List[str]]
+        Parameter to delete the attribute of the OP specified in --op_name.\n\
+        If the OP specified in --op_name has no attributes, it is ignored.\n\
+        delete_attributes can be specified multiple times.\n\
+        --delete_attributes name1 name2 name3\n\
+        https://github.com/onnx/onnx/blob/main/docs/Operators.md\n\n\
+        e.g.\n\
+        --delete_attributes alpha beta
 
     input_constants: Optional[dict]
         Specifies the name of the constant to be changed. \n\
@@ -199,15 +209,22 @@ def modify(
     # Updating Attributes
     # attributes = {"alpha": 1.0, "beta": 1.0, "transA": 0, "transB": 0}
     if node_subject_to_change:
-        for update_attr_key, update_attr_value in attributes.items():
-            found_flg = False
-            for node_subject_to_change_attr_key in node_subject_to_change.attrs.keys():
-                if node_subject_to_change_attr_key == update_attr_key:
-                    node_subject_to_change.attrs[node_subject_to_change_attr_key] = update_attr_value
-                    found_flg = True
-                    break
-            if not found_flg:
-                node_subject_to_change.attrs[update_attr_key] = update_attr_value
+        # Update
+        if attributes:
+            for update_attr_key, update_attr_value in attributes.items():
+                found_flg = False
+                for node_subject_to_change_attr_key in node_subject_to_change.attrs.keys():
+                    if node_subject_to_change_attr_key == update_attr_key:
+                        node_subject_to_change.attrs[node_subject_to_change_attr_key] = update_attr_value
+                        found_flg = True
+                        break
+                if not found_flg:
+                    node_subject_to_change.attrs[update_attr_key] = update_attr_value
+
+        # Delete
+        if delete_attributes:
+            node_subject_to_change.attrs = \
+                {attr_key: attr_value for attr_key, attr_value in node_subject_to_change.attrs.items() if attr_key not in delete_attributes}
 
     # Updating Constants
     """
@@ -296,7 +313,6 @@ def main():
         action='append',
         help=\
             'Parameter to change the attribute of the OP specified in --op_name. \n'+
-            'If the OP specified in --op_name has no attributes, it is ignored. \n'+
             'attributes can be specified multiple times. \n'+
             '--attributes name dtype value \n'+
             'dtype is one of "float32" or "float64" or "int32" or "int64" or "str". \n'+
@@ -306,6 +322,18 @@ def main():
             '--attributes beta float32 1.0 \n'+
             '--attributes transA int64 0 \n'+
             '--attributes transB int64 0'
+    )
+    parser.add_argument(
+        '--delete_attributes',
+        nargs='+',
+        help=\
+            'Parameter to delete the attribute of the OP specified in --op_name. \n'+
+            'If the OP specified in --op_name has no attributes, it is ignored. \n'+
+            'delete_attributes can be specified multiple times. \n'+
+            '--delete_attributes name1 name2 name3 \n'+
+            'https://github.com/onnx/onnx/blob/main/docs/Operators.md \n\n'+
+            'e.g.\n'+
+            '--delete_attributes alpha beta'
     )
     parser.add_argument(
         '--input_constants',
@@ -334,6 +362,7 @@ def main():
     input_constants = args.input_constants
     op_name = args.op_name
     attributes = args.attributes
+    delete_attributes = args.delete_attributes
     non_verbose = args.non_verbose
 
     # file existence check
@@ -352,7 +381,7 @@ def main():
     graph = gs.import_onnx(onnx_graph)
 
     # op_name and attributes must always be specified at the same time.
-    if (op_name and not attributes) or (not op_name and attributes):
+    if (not op_name and attributes) or (not op_name and delete_attributes):
         print(
             f'{Color.RED}ERROR:{Color.RESET} '+
             f'op_name and attributes must always be specified at the same time.'
@@ -430,6 +459,7 @@ def main():
         onnx_graph=onnx_graph,
         op_name=op_name,
         attributes=attributes_tmp,
+        delete_attributes=delete_attributes,
         input_constants=input_constants_tmp,
         non_verbose=non_verbose
     )
