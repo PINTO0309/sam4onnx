@@ -199,11 +199,15 @@ def modify(
     # Updating Attributes
     # attributes = {"alpha": 1.0, "beta": 1.0, "transA": 0, "transB": 0}
     if node_subject_to_change:
-        for node_subject_to_change_attr_key in node_subject_to_change.attrs.keys():
-            for update_attr_key, update_attr_value in attributes.items():
+        for update_attr_key, update_attr_value in attributes.items():
+            found_flg = False
+            for node_subject_to_change_attr_key in node_subject_to_change.attrs.keys():
                 if node_subject_to_change_attr_key == update_attr_key:
                     node_subject_to_change.attrs[node_subject_to_change_attr_key] = update_attr_value
+                    found_flg = True
                     break
+            if not found_flg:
+                node_subject_to_change.attrs[update_attr_key] = update_attr_value
 
     # Updating Constants
     """
