@@ -8,7 +8,7 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon
 import onnx_graphsurgeon as gs
-from onnx_graphsurgeon.ir.tensor import Variable
+from onnx_graphsurgeon.ir.tensor import Variable, Constant
 from typing import Optional, List
 
 class Color:
@@ -87,9 +87,13 @@ def __search_op_constant_from_input_constant_name(
     input_constant_to_change = None
     for graph_node in graph.nodes:
         for input in graph_node.inputs:
-            if isinstance(input, Variable) and input.name == input_constant_name:
-                input_constant_to_change = input.inputs[0]
+            if isinstance(input, Constant) and input.name == input_constant_name:
+                input_constant_to_change = input
                 break
+            elif isinstance(input, Variable) and input.name == input_constant_name:
+                if input.inputs[0].op == 'Constant':
+                    input_constant_to_change = input.inputs[0]
+                    break
         else:
             continue
         break
@@ -251,10 +255,13 @@ def modify(
     if input_constants:
         for input_constant_name, input_constant_value in input_constants.items():
             constant = __search_op_constant_from_input_constant_name(graph, input_constant_name)
-            constant.attrs['value'] = gs.Constant(
-                name='',
-                values=input_constant_value
-            )
+            if hasattr(constant, "attrs"):
+                constant.attrs['value'] = gs.Constant(
+                    name='',
+                    values=input_constant_value
+                )
+            else:
+                constant.values = input_constant_value
 
     # Cleanup
     graph.cleanup().toposort()
