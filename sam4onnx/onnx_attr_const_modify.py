@@ -2,6 +2,7 @@
 
 import os
 import sys
+import ast
 import traceback
 from argparse import ArgumentParser
 import numpy as np
@@ -406,7 +407,7 @@ def main():
             # parse
             attr_name = attribute[0]
             attr_type = attribute[1]
-            attr_value = eval(attribute[2])
+            attr_value = ast.literal_eval(attribute[2])
 
             # dtype check
             if attr_type not in ATTRIBUTE_DTYPES_TO_NUMPY_TYPES:
@@ -443,7 +444,7 @@ def main():
             # Parse
             constant_name = input_constant[0]
             constant_type = input_constant[1]
-            constant_value = eval(input_constant[2])
+            constant_value = ast.literal_eval(input_constant[2])
 
             # dtype check
             if constant_type not in CONSTANT_DTYPES_TO_NUMPY_TYPES:
