@@ -5,6 +5,10 @@ https://github.com/PINTO0309/simple-onnx-processing-tools
 
 [![Downloads](https://static.pepy.tech/personalized-badge/sam4onnx?period=total&units=none&left_color=grey&right_color=brightgreen&left_text=Downloads)](https://pepy.tech/project/sam4onnx) ![GitHub](https://img.shields.io/github/license/PINTO0309/sam4onnx?color=2BAF2B) [![PyPI](https://img.shields.io/pypi/v/sam4onnx?color=2BAF2B)](https://pypi.org/project/sam4onnx/) [![CodeQL](https://github.com/PINTO0309/sam4onnx/workflows/CodeQL/badge.svg)](https://github.com/PINTO0309/sam4onnx/actions?query=workflow%3ACodeQL)
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/33194443/170155850-65e2f103-baa9-4061-a268-020f0c8bc6f8.png" />
+</p>
+
 # Key concept
 - [x] Specify an arbitrary OP name and Constant type INPUT name or an arbitrary OP name and Attribute name, and pass the modified constants to rewrite the parameters of the relevant OP.
 - [x] Two types of input are accepted: .onnx file input and onnx.ModelProto format objects.
