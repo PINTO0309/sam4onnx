@@ -407,7 +407,12 @@ def main():
             # parse
             attr_name = attribute[0]
             attr_type = attribute[1]
-            attr_value = ast.literal_eval(attribute[2])
+            if attr_type == 'string':
+                attr_type = 'str'
+            if attr_type != 'str':
+                attr_value = ast.literal_eval(attribute[2])
+            else:
+                attr_value = attribute[2]
 
             # dtype check
             if attr_type not in ATTRIBUTE_DTYPES_TO_NUMPY_TYPES:
