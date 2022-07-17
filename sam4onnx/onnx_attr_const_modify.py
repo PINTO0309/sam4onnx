@@ -67,7 +67,8 @@ CONSTANT_DTYPES_TO_NUMPY_TYPES = {
 
 def __search_op_constant_from_input_constant_name(
     graph: onnx_graphsurgeon.Graph,
-    input_constant_name: str
+    input_constant_name: str,
+    op_name: str,
 ):
     """
     Parameters
@@ -78,15 +79,29 @@ def __search_op_constant_from_input_constant_name(
     input_constant_name: str
         input_constant_name of the search target.
 
+    op_name: str
+        op_name of the search target.
+
     Returns
     -------
-    input_constant_to_change:
+    input_constant_to_change: gs.Node
         constant found.
         If not found, return an None.
+
+    new_constant_name: str
+        A new name to be given only to the constant
+        with the corresponding op_name if there are
+        multiple constants with the same name in the model.
     """
     # Search for variable matching variable_name
     input_constant_to_change = None
-    for graph_node in graph.nodes:
+    graph_nodes = None
+    if op_name:
+        graph_nodes = [graph_node for graph_node in graph.nodes if graph_node.name == op_name]
+    else:
+        graph_nodes = graph.nodes
+
+    for graph_node in graph_nodes:
         for input in graph_node.inputs:
             if isinstance(input, Constant) and input.name == input_constant_name:
                 input_constant_to_change = input
@@ -99,8 +114,22 @@ def __search_op_constant_from_input_constant_name(
             continue
         break
 
+    # If the same input_constant_name constant exists in the model,
+    # a new name is given only to the constant with the corresponding op_name.
+    new_constant_name = None
+    if input_constant_to_change is not None and op_name:
+        num_of_const_with_the_same_name = sum(
+            [
+                1 for graph_node in graph.nodes \
+                    for input in graph_node.inputs \
+                        if input.name == input_constant_name
+            ]
+        )
+        if num_of_const_with_the_same_name > 1:
+            new_constant_name = f'{input_constant_name}_mod_{num_of_const_with_the_same_name}'
+
     # Return variable
-    return input_constant_to_change
+    return input_constant_to_change, new_constant_name
 
 
 def modify(
@@ -255,14 +284,57 @@ def modify(
     """
     if input_constants:
         for input_constant_name, input_constant_value in input_constants.items():
-            constant = __search_op_constant_from_input_constant_name(graph, input_constant_name)
-            if hasattr(constant, "attrs"):
-                constant.attrs['value'] = gs.Constant(
-                    name='',
-                    values=input_constant_value
-                )
+            constant, new_constant_name = __search_op_constant_from_input_constant_name(
+                graph,
+                input_constant_name,
+                op_name,
+            )
+            if constant is not None:
+                if hasattr(constant, "attrs"):
+                    constant.attrs['value'] = gs.Constant(
+                        name='' if new_constant_name is None else new_constant_name,
+                        values=input_constant_value
+                    )
+                else:
+                    if new_constant_name is None:
+                        constant.values = input_constant_value
+                    else:
+                        if op_name:
+                            new_constant = gs.Constant(
+                                name=new_constant_name,
+                                values=input_constant_value
+                            )
+                            graph_nodes = [graph_node for graph_node in graph.nodes if graph_node.name == op_name]
+                            target_node = None
+                            target_input_idx = -1
+                            for graph_node in graph_nodes:
+                                for idx, graph_node_input in enumerate(graph_node.inputs):
+                                    if graph_node_input.name == input_constant_name:
+                                        target_node = graph_node
+                                        target_input_idx = idx
+                                        break
+                                else:
+                                    continue
+                                break
+                            if target_node and target_input_idx > -1:
+                                target_node.inputs[target_input_idx] = new_constant
+                            else:
+                                pass
+                        else:
+                            constant.values = input_constant_value
+
             else:
-                constant.values = input_constant_value
+                if not non_verbose:
+                    if op_name:
+                        print(
+                            f'{Color.YELLOW}WARNING:{Color.RESET} '+
+                            f'op_name: {op_name}, input_constant_name: {input_constant_name} did not exist in the model.'
+                        )
+                    else:
+                        print(
+                            f'{Color.YELLOW}WARNING:{Color.RESET} '+
+                            f'input_constant_name: {input_constant_name} did not exist in the model.'
+                        )
 
     # Cleanup
     graph.cleanup().toposort()
@@ -436,7 +508,7 @@ def main():
         input_constants_tmp = {}
         for input_constant in input_constants:
             # Search for OPs corresponding to the name of input_constant
-            constant = __search_op_constant_from_input_constant_name(graph, input_constant[0])
+            constant, _ = __search_op_constant_from_input_constant_name(graph, input_constant[0], op_name)
 
             # None: Not found
             if not constant:

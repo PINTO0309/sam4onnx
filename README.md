@@ -214,9 +214,9 @@ modified_graph = modify(
 ![image](https://user-images.githubusercontent.com/33194443/163525107-f355bc2e-66d6-4a8e-bc54-2fcfc36107e8.png)
 ```bash
 $ sam4onnx \
---op_name Transpose_17 \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
 --output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
+--op_name Transpose_17 \
 --attributes perm int64 [0,1]
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163525149-64da02af-754f-40e5-916a-20f581ff0034.png)
@@ -227,6 +227,7 @@ $ sam4onnx \
 $ sam4onnx \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
 --output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
+--op_name Mul_5 \
 --input_constants 170 float32 1
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163560202-15584279-58d7-4c96-b1c3-7366d165ba21.png)
@@ -237,6 +238,7 @@ $ sam4onnx \
 $ sam4onnx \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
 --output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
+--op_name Reshape_34 \
 --input_constants 241 int64 [1]
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163561022-2e3dae84-7c6e-4ed0-9644-2248f91ab2ab.png)
