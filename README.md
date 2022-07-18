@@ -204,7 +204,7 @@ from sam4onnx import modify
 
 modified_graph = modify(
     onnx_graph=graph,
-    op_name="Transpose_17",
+    op_name="Reshape_17",
     input_constants={"241": np.asarray([1], dtype=np.int64)},
     non_verbose=True,
 )
