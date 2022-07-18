@@ -192,9 +192,9 @@ modify(
 ## 4. CLI Execution
 ```bash
 $ sam4onnx \
---op_name Transpose_17 \
 --input_onnx_file_path input.onnx \
 --output_onnx_file_path output.onnx \
+--op_name Transpose_17 \
 --attributes perm int64 [0,1]
 ```
 
@@ -204,6 +204,7 @@ from sam4onnx import modify
 
 modified_graph = modify(
     onnx_graph=graph,
+    op_name=Transpose_17,
     input_constants={"241": np.asarray([1], dtype=np.int64)},
     non_verbose=True,
 )
