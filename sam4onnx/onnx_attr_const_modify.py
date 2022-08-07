@@ -481,10 +481,39 @@ def main():
             attr_type = attribute[1]
             if attr_type == 'string':
                 attr_type = 'str'
-            if attr_type != 'str':
-                attr_value = ast.literal_eval(attribute[2])
-            else:
+            if attr_type == 'str':
                 attr_value = attribute[2]
+            else:
+                if ('-inf' in attribute[2].lower()) or ('-infinity' in attribute[2].lower()):
+                    lower_attr = attribute[2].lower()
+                    inf_count = lower_attr.count('-inf')
+                    infinity_count = lower_attr.count('-infinity')
+                    if (inf_count + infinity_count) > 1:
+                        print(
+                            f'{Color.RED}ERROR:{Color.RESET} '+
+                            f'Values containing "inf" or "-inf" can only be 1D tensors. \n'+
+                            f'e.g. [inf] or [-inf]'
+                        )
+                        sys.exit(1)
+                    else:
+                        attr_value = [-np.inf]
+
+                elif ('inf' in attribute[2].lower()) or ('infinity' in attribute[2].lower()):
+                    lower_attr = attribute[2].lower()
+                    inf_count = lower_attr.count('inf')
+                    infinity_count = lower_attr.count('infinity')
+                    if (inf_count + infinity_count) > 1:
+                        print(
+                            f'{Color.RED}ERROR:{Color.RESET} '+
+                            f'Values containing "inf" or "-inf" can only be 1D tensors. \n'+
+                            f'e.g. [inf] or [-inf]'
+                        )
+                        sys.exit(1)
+                    else:
+                        attr_value = [np.inf]
+
+                else:
+                    attr_value = ast.literal_eval(attribute[2])
 
             # dtype check
             if attr_type not in ATTRIBUTE_DTYPES_TO_NUMPY_TYPES:

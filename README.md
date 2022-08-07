@@ -93,6 +93,7 @@ optional arguments:
         e.g.
         --input_constants constant_name1 int64 0
         --input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]
+        --input_constants constant_name3 float32 ['-Infinity']
 
   --non_verbose
         Do not show all information logs. Only error logs are displayed.
@@ -149,7 +150,7 @@ modify(
                 "alpha": np.asarray(1.0, dtype=np.float32),
                 "beta": np.asarray(1.0, dtype=np.float32),
                 "transA": np.asarray(0, dtype=np.int64),
-                "transB": np.asarray(0, dtype=np.int64)
+                "transB": np.asarray(0, dtype=np.int64),
             }
         Default: None
         https://github.com/onnx/onnx/blob/main/docs/Operators.md
@@ -174,7 +175,8 @@ modify(
         input_constants =
             {
                 "constant_name1": np.asarray(0, dtype=np.int64),
-                "constant_name2": np.asarray([[1.0,2.0,3.0],[4.0,5.0,6.0]], dtype=np.float32)
+                "constant_name2": np.asarray([[1.0,2.0,3.0],[4.0,5.0,6.0]], dtype=np.float32),
+                "constant_name3": np.asarray([-np.inf], dtype=np.float32),
             }
         Default: None
         https://github.com/onnx/onnx/blob/main/docs/Operators.md
