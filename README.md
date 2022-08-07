@@ -93,7 +93,7 @@ optional arguments:
         e.g.
         --input_constants constant_name1 int64 0
         --input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]
-        --input_constants constant_name3 float32 ['-Infinity']
+        --input_constants constant_name3 float32 [\'-Infinity\']
 
   --non_verbose
         Do not show all information logs. Only error logs are displayed.
