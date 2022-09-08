@@ -368,18 +368,21 @@ def modify(
 def main():
     parser = ArgumentParser()
     parser.add_argument(
+        '-if',
         '--input_onnx_file_path',
         type=str,
         required=True,
         help='Input onnx file path.'
     )
     parser.add_argument(
+        '-of',
         '--output_onnx_file_path',
         type=str,
         required=True,
         help='Output onnx file path.'
     )
     parser.add_argument(
+        '-on',
         '--op_name',
         type=str,
         help=\
@@ -388,6 +391,7 @@ def main():
             'e.g. --op_name aaa'
     )
     parser.add_argument(
+        '-a',
         '--attributes',
         nargs=3,
         action='append',
@@ -404,6 +408,7 @@ def main():
             '--attributes transB int64 0'
     )
     parser.add_argument(
+        '-da',
         '--delete_attributes',
         nargs='+',
         help=\
@@ -416,6 +421,7 @@ def main():
             '--delete_attributes alpha beta'
     )
     parser.add_argument(
+        '-ic',
         '--input_constants',
         type=str,
         nargs=3,
@@ -431,6 +437,7 @@ def main():
             '--input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]'
     )
     parser.add_argument(
+        '-n',
         '--non_verbose',
         action='store_true',
         help='Do not show all information logs. Only error logs are displayed.'

@@ -37,66 +37,66 @@ $ sam4onnx -h
 
 usage:
     sam4onnx [-h]
-    --input_onnx_file_path INPUT_ONNX_FILE_PATH
-    --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
-    [--op_name OP_NAME]
-    [--attributes NAME DTYPE VALUE]
-    [--delete_attributes DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]]
-    [--input_constants NAME DTYPE VALUE]
-    [--non_verbose]
+    -if INPUT_ONNX_FILE_PATH
+    -of OUTPUT_ONNX_FILE_PATH
+    [-on OP_NAME]
+    [-a NAME DTYPE VALUE]
+    [-da DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]]
+    [-ic NAME DTYPE VALUE]
+    [-n]
 
 optional arguments:
   -h, --help
-        show this help message and exit
+    show this help message and exit
 
-  --input_onnx_file_path INPUT_ONNX_FILE_PATH
-        Input onnx file path.
+  -if INPUT_ONNX_FILE_PATH, --input_onnx_file_path INPUT_ONNX_FILE_PATH
+    Input onnx file path.
 
-  --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
-        Output onnx file path.
+  -of OUTPUT_ONNX_FILE_PATH, --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
+    Output onnx file path.
 
-  --op_name OP_NAME
-        OP name of the attributes to be changed.
-        When --attributes is specified, --op_name must always be specified.
-        e.g. --op_name aaa
+  -on OP_NAME, --op_name OP_NAME
+    OP name of the attributes to be changed.
+    When --attributes is specified, --op_name must always be specified.
+    e.g. --op_name aaa
 
-  --attributes NAME DTYPE VALUE
-        Parameter to change the attribute of the OP specified in --op_name.
-        If the OP specified in --op_name has no attributes,
-        it is ignored. attributes can be specified multiple times.
-        --attributes name dtype value dtype is one of
-        "float32" or "float64" or "int32" or "int64" or "str".
-        https://github.com/onnx/onnx/blob/main/docs/Operators.md
+  -a ATTRIBUTES ATTRIBUTES ATTRIBUTES, --attributes ATTRIBUTES ATTRIBUTES ATTRIBUTES
+    Parameter to change the attribute of the OP specified in --op_name.
+    If the OP specified in --op_name has no attributes,
+    it is ignored. attributes can be specified multiple times.
+    --attributes name dtype value dtype is one of
+    "float32" or "float64" or "int32" or "int64" or "str".
+    https://github.com/onnx/onnx/blob/main/docs/Operators.md
 
-        e.g.
-        --attributes alpha float32 [[1.0]]
-        --attributes beta float32 [1.0]
-        --attributes transA int64 0
-        --attributes transB int64 0
+    e.g.
+    --attributes alpha float32 [[1.0]]
+    --attributes beta float32 [1.0]
+    --attributes transA int64 0
+    --attributes transB int64 0
 
-  --delete_attributes DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]
-        Parameter to delete the attribute of the OP specified in --op_name.
-        If the OP specified in --op_name has no attributes,
-        it is ignored. delete_attributes can be specified multiple times.
-        --delete_attributes name1 name2 name3
-        https://github.com/onnx/onnx/blob/main/docs/Operators.md
+  -da DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...], --delete_attributes DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]
+    Parameter to delete the attribute of the OP specified in --op_name.
+    If the OP specified in --op_name has no attributes,
+    it is ignored. delete_attributes can be specified multiple times.
+    --delete_attributes name1 name2 name3
+    https://github.com/onnx/onnx/blob/main/docs/Operators.md
 
-        e.g. --delete_attributes alpha beta
+    e.g. --delete_attributes alpha beta
 
-  --input_constants NAME DTYPE VALUE
-        Specifies the name of the constant to be changed.
-        If you want to change only the constant,
-        you do not need to specify --op_name and --attributes.
-        input_constants can be specified multiple times.
-        --input_constants constant_name numpy.dtype value
+  -ic INPUT_CONSTANTS INPUT_CONSTANTS INPUT_CONSTANTS, --input_constants INPUT_CONSTANTS INPUT_CONSTANTS INPUT_CONSTANTS
+    Specifies the name of the constant to be changed.
+    If you want to change only the constant,
+    you do not need to specify --op_name and --attributes.
+    input_constants can be specified multiple times.
+    --input_constants constant_name numpy.dtype value
 
-        e.g.
-        --input_constants constant_name1 int64 0
-        --input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]
-        --input_constants constant_name3 float32 [\'-Infinity\']
+    e.g.
+    --input_constants constant_name1 int64 0
+    --input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]
+    --input_constants constant_name3 float32 [\'-Infinity\']
 
-  --non_verbose
-        Do not show all information logs. Only error logs are displayed.
+  -n, --non_verbose
+    Do not show all information logs. Only error logs are displayed.
 ```
 
 ## 3. In-script Usage
