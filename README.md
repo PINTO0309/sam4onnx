@@ -43,6 +43,7 @@ usage:
     [-a NAME DTYPE VALUE]
     [-da DELETE_ATTRIBUTES [DELETE_ATTRIBUTES ...]]
     [-ic NAME DTYPE VALUE]
+    [-os OUTPUT_NAME OUTPUT_SHAPE]
     [-n]
 
 optional arguments:
@@ -95,6 +96,15 @@ optional arguments:
     --input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]
     --input_constants constant_name3 float32 [\'-Infinity\']
 
+  -os OUTPUT_SHAPES OUTPUT_SHAPES, --output_shapes OUTPUT_SHAPES OUTPUT_SHAPES
+    Specifies the name of the output to be changed. output_shapes can be specified multiple times.
+    --output_shapes output_name1 shape1
+    --output_shapes output_name2 shape2
+
+    e.g.
+    --output_shapes output_name1 [1]
+    --output_shapes output_name2 [1,3,224,224]
+
   -n, --non_verbose
     Do not show all information logs. Only error logs are displayed.
 ```
@@ -115,6 +125,7 @@ modify(
     attributes: Union[dict, NoneType] = None,
     delete_attributes: Union[List[str], NoneType] = None,
     input_constants: Union[dict, NoneType] = None,
+    output_shapes: Optional[List] = None,
     non_verbose: Union[bool, NoneType] = False
 ) -> onnx.onnx_ml_pb2.ModelProto
 
@@ -181,6 +192,20 @@ modify(
         Default: None
         https://github.com/onnx/onnx/blob/main/docs/Operators.md
 
+    output_shapes: Optional[List[int]]
+        Specifies the name of the output_shapes to be changed.
+        output_shapes can be specified multiple times.
+        output_shapes = [
+            ['output_name1', shape1],
+            ['output_name2', shape2],
+                    :
+        ]
+        e.g.
+        output_shapes = [
+            ['aaa', [1]],
+            ['bbb', [1,3,224,224]],
+        ]
+
     non_verbose: Optional[bool]
         Do not show all information logs. Only error logs are displayed.
         Default: False
@@ -213,14 +238,15 @@ modified_graph = modify(
 ```
 
 ## 6. Sample
-### 6-1. Transpose - update **`perm`**
+### 6-1. Transpose - update **`perm`** and **`output_shapes`**
 ![image](https://user-images.githubusercontent.com/33194443/163525107-f355bc2e-66d6-4a8e-bc54-2fcfc36107e8.png)
 ```bash
 $ sam4onnx \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt.onnx \
 --output_onnx_file_path hitnet_sf_finalpass_720x1280_nonopt_mod.onnx \
 --op_name Transpose_17 \
---attributes perm int64 [0,1]
+--attributes perm int64 [0,1] \
+--output_shapes [128,256]
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163525149-64da02af-754f-40e5-916a-20f581ff0034.png)
 

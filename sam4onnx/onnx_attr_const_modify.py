@@ -145,6 +145,7 @@ def modify(
     attributes: Optional[dict] = None,
     delete_attributes: Optional[List[str]] = None,
     input_constants: Optional[dict] = None,
+    output_shapes: Optional[List] = None,
     non_verbose: Optional[bool] = False,
 ) -> onnx.ModelProto:
 
@@ -206,6 +207,20 @@ def modify(
             }\n\
         Default: None\n\
         https://github.com/onnx/onnx/blob/main/docs/Operators.md
+
+    output_shapes: Optional[List[int]]
+        Specifies the name of the output_shapes to be changed.\n\
+        output_shapes can be specified multiple times.\n\
+        output_shapes = [\n\
+            ['output_name1', shape1],\n\
+            ['output_name2', shape2],\n\
+                    :\n\
+        ]\n\
+        e.g.\n\
+        output_shapes = [\n\
+            ['aaa', [1]],\n\
+            ['bbb', [1,3,224,224]],\n\
+        ]
 
     non_verbose: Optional[bool]
         Do not show all information logs. Only error logs are displayed.\n\
@@ -283,6 +298,16 @@ def modify(
         if delete_attributes:
             node_subject_to_change.attrs = \
                 {attr_key: attr_value for attr_key, attr_value in node_subject_to_change.attrs.items() if attr_key not in delete_attributes}
+
+    # Updating Ouput shapes
+    if node_subject_to_change:
+        # Update
+        if output_shapes:
+            for outupt_name, output_shape in output_shapes:
+                for output in node_subject_to_change.outputs:
+                    if output.name == outupt_name:
+                        output.shape = output_shape
+
 
     # Updating Constants
     """
@@ -469,6 +494,21 @@ def main():
             '--input_constants constant_name2 float32 [[1.0,2.0,3.0],[4.0,5.0,6.0]]'
     )
     parser.add_argument(
+        '-os',
+        '--output_shapes',
+        type=str,
+        nargs=2,
+        action='append',
+        help=\
+            'Specifies the name of the output_shapes to be changed. \n'+
+            'output_shapes can be specified multiple times. \n'+
+            '--output_shapes output_name1 shape1 \n'+
+            '--output_shapes output_name2 shape2 \n\n'+
+            'e.g.\n'+
+            '--output_shapes output_name1 [1] \n'+
+            '--output_shapes output_name2 [1,3,224,224]'
+    )
+    parser.add_argument(
         '-n',
         '--non_verbose',
         action='store_true',
@@ -479,6 +519,7 @@ def main():
     input_onnx_file_path = args.input_onnx_file_path
     output_onnx_file_path = args.output_onnx_file_path
     input_constants = args.input_constants
+    output_shapes = args.output_shapes
     op_name = args.op_name
     attributes = args.attributes
     delete_attributes = args.delete_attributes
@@ -504,6 +545,14 @@ def main():
         print(
             f'{Color.RED}ERROR:{Color.RESET} '+
             f'op_name and attributes must always be specified at the same time.'
+        )
+        sys.exit(1)
+
+    # op_name and output_shapes must always be specified at the same time.
+    if (not op_name and output_shapes):
+        print(
+            f'{Color.RED}ERROR:{Color.RESET} '+
+            f'op_name and output_shapes must always be specified at the same time.'
         )
         sys.exit(1)
 
@@ -605,6 +654,19 @@ def main():
 
             input_constants_tmp[constant_name] = constant_value
 
+    # output_shapes
+    # output_shapes = [output_name, shape]
+    output_shapes_tmp = None
+    if output_shapes:
+        output_shapes_tmp = []
+        for output_name, output_shape in output_shapes:
+            output_shapes_tmp.append(
+                [
+                    output_name,
+                    ast.literal_eval(output_shape),
+                ]
+            )
+
     # Model modify
     modified_graph = modify(
         input_onnx_file_path=None,
@@ -614,6 +676,7 @@ def main():
         attributes=attributes_tmp,
         delete_attributes=delete_attributes,
         input_constants=input_constants_tmp,
+        output_shapes=output_shapes_tmp,
         non_verbose=non_verbose
     )
 
