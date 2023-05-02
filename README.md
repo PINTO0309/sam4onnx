@@ -273,5 +273,19 @@ $ sam4onnx \
 ```
 ![image](https://user-images.githubusercontent.com/33194443/163561022-2e3dae84-7c6e-4ed0-9644-2248f91ab2ab.png)
 
+### 6-4. Support for recursive search of subgraphs of `If` OP.
+Enhanced functionality to allow parameter rewriting even when the OP to be rewritten is in a hierarchy of multi-level subgraphs.
+  - main graph
+
+    ![image](https://user-images.githubusercontent.com/33194443/235596381-b0b33548-6718-4f87-b3ee-3353bd966354.png)
+
+  - sub graph.1
+
+    ![image](https://user-images.githubusercontent.com/33194443/235596582-adc8695d-58ba-4196-aeb0-a99b2e97c942.png)
+
+  - sub graph.2
+
+    ![image](https://user-images.githubusercontent.com/33194443/235596737-fa7b5e1f-769c-4798-bc44-031bf366867a.png)
+
 ## 7. Issues
 https://github.com/PINTO0309/simple-onnx-processing-tools/issues
