@@ -14,6 +14,7 @@ https://github.com/PINTO0309/simple-onnx-processing-tools
 - [x] Two types of input are accepted: .onnx file input and onnx.ModelProto format objects.
 - [x] To design the operation to be simple, only a single OP can be specified.
 - [x] Attributes and constants are forcibly rewritten, so the integrity of the entire graph is not checked in detail.
+- [x] Support for recursive search of subgraphs of `If` OP.
 
 
 ## 1. Setup

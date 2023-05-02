@@ -70,6 +70,42 @@ ONNX_STANDARD_DOMAINS = [
     '',
 ]
 
+
+def __subgraph_node_search(
+        search_graph: gs.Graph,
+        op_name: str,
+):
+    # Subgraph Search
+    # TODO: Loop OP
+    target_node = None
+    graph_nodes = [graph_node for graph_node in search_graph.nodes if graph_node.op == 'If']
+    for graph_node_if in graph_nodes:
+        then_branch: gs.Graph = graph_node_if.attrs['then_branch']
+        for then_branch_node in then_branch.nodes:
+            if then_branch_node.name == op_name:
+                target_node = then_branch_node
+                break
+        if target_node:
+            break
+        else:
+            target_node = __subgraph_node_search(then_branch, op_name)
+            if target_node:
+                break
+
+        else_branch: gs.Graph = graph_node_if.attrs['else_branch']
+        for else_branch_node in else_branch.nodes:
+            if else_branch_node.name == op_name:
+                target_node = else_branch_node
+                break
+        if target_node:
+            break
+        else:
+            target_node = __subgraph_node_search(else_branch, op_name)
+            if target_node:
+                break
+    return target_node
+
+
 def __search_op_constant_from_input_constant_name(
     graph: onnx_graphsurgeon.Graph,
     input_constant_name: str,
@@ -102,7 +138,19 @@ def __search_op_constant_from_input_constant_name(
     input_constant_to_change = None
     graph_nodes = None
     if op_name:
+        # Main-graph Search
         graph_nodes = [graph_node for graph_node in graph.nodes if graph_node.name == op_name]
+        if not graph_nodes:
+            # Subgraph Search
+            target_nodes = __subgraph_node_search(graph, op_name)
+            target_nodes = target_nodes \
+                if isinstance(target_nodes, list) else [target_nodes]
+
+            if target_nodes:
+                graph_nodes = target_nodes
+            else:
+                graph_nodes = graph.nodes
+
     else:
         graph_nodes = graph.nodes
 
@@ -125,7 +173,7 @@ def __search_op_constant_from_input_constant_name(
     if input_constant_to_change is not None and op_name:
         num_of_const_with_the_same_name = sum(
             [
-                1 for graph_node in graph.nodes \
+                1 for graph_node in graph_nodes \
                     for input in graph_node.inputs \
                         if input.name == input_constant_name
             ]
@@ -267,10 +315,11 @@ def modify(
     # Search for OPs matching op_name
     node_subject_to_change = None
     if op_name:
-        for graph_node in graph.nodes:
-            if graph_node.name == op_name:
-                node_subject_to_change = graph_node
-                break
+        # Main-graph Search
+        node_subject_to_change = [graph_node for graph_node in graph.nodes if graph_node.name == op_name]
+        if not node_subject_to_change:
+            # Subgraph Search
+            node_subject_to_change = __subgraph_node_search(graph, op_name)
 
         if not node_subject_to_change:
             print(
