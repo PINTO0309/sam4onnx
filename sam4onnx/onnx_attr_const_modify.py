@@ -301,6 +301,10 @@ def modify(
                     if node.domain not in ONNX_STANDARD_DOMAINS
             ]
 
+    # domain, ir_version
+    domain: str = onnx_graph.domain
+    ir_version: int = onnx_graph.ir_version
+
     graph = gs.import_onnx(onnx_graph)
 
     # Check if Graph contains a custom domain (custom module)
@@ -436,7 +440,7 @@ def modify(
 
     # Cleanup
     graph.cleanup().toposort()
-    modified_graph = gs.export_onnx(graph)
+    modified_graph = gs.export_onnx(graph, do_type_check=False, **{'domain': domain, 'ir_version': ir_version})
 
     # Optimize
     new_model = None
