@@ -64,13 +64,6 @@ CONSTANT_DTYPES_TO_NUMPY_TYPES = {
     'complex128': np.complex128,
 }
 
-ONNX_STANDARD_DOMAINS = [
-    'ai.onnx',
-    'ai.onnx.ml',
-    '',
-]
-
-
 def __subgraph_node_search(
         search_graph: gs.Graph,
         op_name: str,
