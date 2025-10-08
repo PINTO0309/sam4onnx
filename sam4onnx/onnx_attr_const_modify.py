@@ -318,6 +318,8 @@ def modify(
         if attributes:
             for update_attr_key, update_attr_value in attributes.items():
                 found_flg = False
+                if isinstance(node_subject_to_change, List):
+                    node_subject_to_change = node_subject_to_change[0]
                 for node_subject_to_change_attr_key in node_subject_to_change.attrs.keys():
                     if node_subject_to_change_attr_key == update_attr_key:
                         node_subject_to_change.attrs[node_subject_to_change_attr_key] = update_attr_value
