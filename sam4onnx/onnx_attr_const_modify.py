@@ -7,9 +7,12 @@ import traceback
 from argparse import ArgumentParser
 import numpy as np
 import onnx
-import onnx_graphsurgeon
-import onnx_graphsurgeon as gs
-from onnx_graphsurgeon.ir.tensor import Variable, Constant
+try:
+    from . import gs
+except ImportError:
+    import gs
+Variable = gs.Variable
+Constant = gs.Constant
 from typing import Optional, List
 
 class Color:
@@ -100,14 +103,14 @@ def __subgraph_node_search(
 
 
 def __search_op_constant_from_input_constant_name(
-    graph: onnx_graphsurgeon.Graph,
+    graph: gs.Graph,
     input_constant_name: str,
     op_name: str,
 ):
     """
     Parameters
     ----------
-    graph: onnx_graphsurgeon.Graph
+    graph: gs.Graph
         Graphs to be explored.
 
     input_constant_name: str
@@ -118,7 +121,7 @@ def __search_op_constant_from_input_constant_name(
 
     Returns
     -------
-    input_constant_to_change: gs.Node
+    input_constant_to_change: gs.Node or gs.Constant
         constant found.
         If not found, return an None.
 
@@ -153,8 +156,18 @@ def __search_op_constant_from_input_constant_name(
                 input_constant_to_change = input
                 break
             elif isinstance(input, Variable) and input.name == input_constant_name:
-                if input.inputs[0].op == 'Constant':
-                    input_constant_to_change = input.inputs[0]
+                producer_const = None
+                for producer in getattr(input, "inputs", []):
+                    if isinstance(producer, gs.Node) and producer.op == 'Constant':
+                        producer_const = producer
+                        break
+                if producer_const is None:
+                    for producer in getattr(input, "inputs", []):
+                        if isinstance(producer, Constant):
+                            producer_const = producer
+                            break
+                if producer_const is not None:
+                    input_constant_to_change = producer_const
                     break
         else:
             continue

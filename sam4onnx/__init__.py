@@ -1,3 +1,3 @@
 from sam4onnx.onnx_attr_const_modify import modify, main
 
-__version__ = '1.0.17'
+__version__ = '2.0.0'
